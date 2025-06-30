@@ -1,0 +1,81 @@
+```json
+{
+  "blocApiVersion": "1.0",
+  "metadata": {
+    "id": "primex-sample-wallet-hero-v1.0.0",
+    "name": "Bannière Héroïque Web3 avec Connexion Wallet",
+    "version": "1.0.0",
+    "author": "Primex Samples",
+    "authorUrl": "https://primex-software.com",
+    "description": "Une section 'hero' moderne et engageante pour une dApp, incluant un titre, un sous-titre, une image de fond illustrative (placeholder), et un bouton 'Connect Wallet' pré-configuré. Idéal pour la page d'accueil de votre projet Web3.",
+    "tags": ["hero", "landing page", "web3", "wallet", "cta", "banner"],
+    "category": "Layout/Sections",
+    "previewImageUrl": "https://primex-software.com/block_previews/sample-wallet-hero-block.png",
+    "createdAt": "2024-07-29T12:00:00Z",
+    "lastModifiedAt": "2024-07-29T12:00:00Z",
+    "licenseType": "Free",
+    "licenseName": "MIT",
+    "compatibility": {
+      "builderVersionMin": "0.1.0"
+    },
+    "usageInstructions": "Personnalisez le titre, le sous-titre et l'image de fond. Le bouton 'Connect Wallet' est prêt à l'emploi."
+  },
+  "content": {
+    "id": "hero-wallet-root-container",
+    "type": "Container",
+    "props": {
+      "backgroundColor": "#1A202C", 
+      "padding": "80px 20px",
+      "textAlign": "center",
+      "minHeight": "400px",
+      "display": "flex", // Pour centrer verticalement avec flexbox
+      "flexDirection": "column",
+      "alignItems": "center",
+      "justifyContent": "center",
+      "backgroundImageUrl": "https://via.placeholder.com/1200x400/2D3748/FFFFFF?text=Web3+Background+Placeholder" // Placeholder image
+    },
+    "children": [
+      {
+        "id": "hero-title-1",
+        "type": "Heading",
+        "props": {
+          "text": "Lancez Votre Projet Web3 Aujourd'hui",
+          "level": "H1",
+          "color": "#FFFFFF",
+          "fontSize": "48px",
+          "fontWeight": "bold",
+          "marginBottom": "20px"
+        },
+        "children": []
+      },
+      {
+        "id": "hero-subtitle-1",
+        "type": "TextParagraph",
+        "props": {
+          "text": "Utilisez BlockDeploy pour construire, déployer et gérer vos applications décentralisées sans effort.",
+          "color": "#A0AEC0", 
+          "fontSize": "20px",
+          "maxWidth": "600px",
+          "margin": "0 auto 30px auto"
+        },
+        "children": []
+      },
+      {
+        "id": "hero-connect-wallet-btn-1",
+        "type": "ConnectWalletButton",
+        "props": {
+          "disconnectedText": "Connecter Votre Wallet",
+          "connectedTextPrefix": "Connecté: ",
+          "variant": "primary", 
+          "size": "large",
+          "backgroundColor": "#3182CE", // Exemple de couleur primaire
+          "textColor": "#FFFFFF",
+          "padding": "15px 30px",
+          "borderRadius": "8px"
+        },
+        "children": []
+      }
+    ]
+  }
+}
+```

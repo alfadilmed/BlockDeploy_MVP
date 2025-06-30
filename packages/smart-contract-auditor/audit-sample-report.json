@@ -1,0 +1,100 @@
+```json
+{
+  "reportVersion": "0.1.0",
+  "analysisTimestamp": "2024-07-29T10:30:00Z",
+  "inputDetails": {
+    "type": "file_upload",
+    "contractName": "VulnerableContract.sol",
+    "solidityVersion": "0.8.20"
+  },
+  "summary": {
+    "totalIssues": 3,
+    "severities": {
+      "high": 1,
+      "medium": 1,
+      "low": 1,
+      "informational": 0,
+      "optimizer": 0
+    },
+    "score": 65 
+  },
+  "findings": [
+    {
+      "id": "SWC-103",
+      "name": "Floating Pragma",
+      "description": "Contracts should be deployed with the same compiler version and flags that they have been tested with thoroughly. Locking the pragma helps to ensure that contracts do not accidentally get deployed using, for example, an outdated compiler version that might introduce bugs that affect the contract system negatively.",
+      "severity": "Low",
+      "confidence": "High",
+      "elements": [
+        {
+          "type": "source_mapping",
+          "name": "VulnerableContract.sol",
+          "source_mapping": {
+            "lines": [3],
+            "start_char": 0,
+            "end_char": 25
+          },
+          "snippet": "pragma solidity ^0.8.20;"
+        }
+      ],
+      "recommendation": "Lock the pragma version by removing the caret (^) and specifying a fixed compiler version. For example, change `pragma solidity ^0.8.20;` to `pragma solidity 0.8.20;`.",
+      "referenceUrls": [
+        "https://swcregistry.io/docs/SWC-103",
+        "https://docs.soliditylang.org/en/v0.8.20/layout-of-source-files.html#pragma"
+      ]
+    },
+    {
+      "id": "PRIMEX-TX-ORIGIN",
+      "name": "Authorization through tx.origin",
+      "description": "Using `tx.origin` for authorization can make a contract vulnerable to phishing attacks. If an authorized account (e.g., owner) is tricked into calling a malicious contract, the malicious contract can then call back to the vulnerable contract using the owner's `tx.origin`, potentially leading to unauthorized actions.",
+      "severity": "High",
+      "confidence": "High",
+      "elements": [
+        {
+          "type": "source_mapping",
+          "name": "VulnerableContract.sol",
+          "source_mapping": {
+            "lines": [15, 16, 17],
+            "start_char": 150, 
+            "end_char": 220 
+          },
+          "snippet": "function transferOwnership(address newOwner) public {\n    require(tx.origin == owner, \"Only owner can transfer ownership\");\n    owner = newOwner;\n}"
+        }
+      ],
+      "recommendation": "Use `msg.sender` instead of `tx.origin` for authorization checks. `msg.sender` refers to the immediate caller, which is more secure against phishing attacks targeting intermediate contracts.",
+      "referenceUrls": [
+        "https://swcregistry.io/docs/SWC-115",
+        "https://consensys.net/diligence/blog/2019/09/stop-using-tx-origin-for-authorization/"
+      ]
+    },
+    {
+      "id": "PRIMEX-REENTRANCY-SIMPLE",
+      "name": "Potential Reentrancy (Low Confidence - Basic Check)",
+      "description": "A call to an external contract is made before an internal state change that affects the condition of the call. If the external contract can call back into this contract before the state change is complete, it might lead to unexpected behavior or exploits. This is a basic pattern match and requires further manual review.",
+      "severity": "Medium",
+      "confidence": "Low",
+      "elements": [
+        {
+          "type": "source_mapping",
+          "name": "VulnerableContract.sol",
+          "source_mapping": {
+            "lines": [25, 26, 27, 28],
+            "start_char": 300,
+            "end_char": 400
+          },
+          "snippet": "function withdraw(uint amount) public {\n    if (balances[msg.sender] >= amount) {\n        (bool success, ) = msg.sender.call{value: amount}(\"\");\n        require(success, \"Transfer failed.\");\n        balances[msg.sender] -= amount;\n    }\n}"
+        }
+      ],
+      "recommendation": "Follow the Checks-Effects-Interactions pattern. Perform all internal state changes (e.g., updating balances) *before* making external calls. Consider using OpenZeppelin's ReentrancyGuard.",
+      "referenceUrls": [
+        "https://swcregistry.io/docs/SWC-107",
+        "https://consensys.net/diligence/blog/2019/09/reentrancy-after-istanbul/"
+      ]
+    }
+  ],
+  "toolInfo": {
+    "name": "BlockDeploy Mock Auditor",
+    "version": "0.1.0-beta"
+  }
+}
+```
