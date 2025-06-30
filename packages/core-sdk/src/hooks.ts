@@ -51,14 +51,16 @@ export function useBlockDeployWallet(): UseBlockDeployWalletReturn {
     chainId: chainId,
   });
 
-  const { data: bdpyTokenBalance, isLoading: isLoadingBdpyBalance } = useBalance({
-    address: address,
-    token: BDPY_TOKEN_ADDRESS,
-    chainId: chainId,
-    query: {
-      enabled: !!BDPY_TOKEN_ADDRESS && !!address && status === 'connected',
-    },
-  });
+  // Utiliser le hook useBdpTokenBalance
+  const {
+    balance: bdpyBalanceValue,
+    isLoading: isLoadingBdpyBalance,
+    // isError: isErrorBdpy, // Peut être utilisé si besoin d'une gestion d'erreur spécifique ici
+    // error: errorBdpy // Peut être utilisé si besoin d'une gestion d'erreur spécifique ici
+  } = useBdpTokenBalance({ address, chainId });
+  // On passe address et chainId explicitement pour s'assurer que useBdpTokenBalance utilise les infos du compte courant
+
+  const bdpyBalance = bdpyBalanceValue; // Renommer pour correspondre à la structure de retour attendue
 
   const isConnectingTo = (connectorId: string): boolean => {
     return isConnecting && pendingConnector?.id === connectorId;
@@ -98,6 +100,43 @@ export function useBlockDeployWallet(): UseBlockDeployWalletReturn {
     isConnectingTo,
   };
 }
+
+// Hook spécifique pour le solde du token BDPY
+export function useBdpTokenBalance(args?: { address?: `0x${string}`, chainId?: number }) {
+  const { address: connectedAddress, chainId: connectedChainId, status } = useAccount();
+
+  const targetAddress = args?.address || connectedAddress;
+  const targetChainId = args?.chainId || connectedChainId;
+
+  const {
+    data: bdpyTokenBalanceData,
+    isLoading,
+    isError,
+    error
+  } = useBalance({
+    address: targetAddress,
+    token: BDPY_TOKEN_ADDRESS,
+    chainId: targetChainId,
+    query: {
+      enabled: !!BDPY_TOKEN_ADDRESS && !!targetAddress && status === 'connected', // Actif seulement si token et adresse sont connus et wallet connecté
+    },
+  });
+
+  return {
+    balance: bdpyTokenBalanceData
+      ? {
+          decimals: bdpyTokenBalanceData.decimals,
+          formatted: bdpyTokenBalanceData.formatted,
+          symbol: bdpyTokenBalanceData.symbol, // Devrait être BDPY si le contrat est correct
+          value: bdpyTokenBalanceData.value,
+        }
+      : undefined,
+    isLoading,
+    isError,
+    error: error instanceof Error ? error : null,
+  };
+}
+
 
 // Reste du fichier (useBlockDeploySendTransaction) inchangé pour l'instant
 import { useSendTransaction } from 'wagmi';

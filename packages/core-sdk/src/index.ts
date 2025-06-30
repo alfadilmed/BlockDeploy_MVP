@@ -4,10 +4,19 @@ export { BlockDeployProviders, blockDeployQueryClient } from './providers';
 
 // Hooks
 export { useBlockDeployWallet } from './hooks';
+export { useBdpTokenBalance } from './hooks'; // Exporter le nouveau hook
 export { useBlockDeploySendTransaction } from './hooks'; // Exemple d'autre hook
 
 // Types
 export * from './types';
+export type { ContractReadOptions, ContractWriteOptions, ContractEventOptions } from './types'; // Ré-exporter explicitement pour clarté
+
+// Contract Interaction Hooks (Placeholders)
+export {
+  useBlockDeployContractRead,
+  useBlockDeployContractWrite,
+  useBlockDeployContractEvent
+} from './contracts';
 
 // Utilitaires
 export * from './utils';
