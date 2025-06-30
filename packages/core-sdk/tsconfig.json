@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.json", // Hérite de la config de base
+  "compilerOptions": {
+    "outDir": "dist", // Répertoire de sortie pour les fichiers compilés
+    "rootDir": "src",   // Répertoire racine des sources
+    "declaration": true, // Générer les fichiers .d.ts
+    "jsx": "react-jsx", // Nécessaire si on a des hooks React ou des composants dans le SDK
+    // Assurez-vous que "paths" dans le tsconfig.json racine n'entre pas en conflit
+    // ou redéfinissez les paths si nécessaire pour ce package.
+    // Pour l'instant, on n'a pas besoin de paths spécifiques ici.
+    "module": "ESNext", // Pour supporter les imports/exports modernes et le tree-shaking
+    "lib": ["ESNext", "DOM"], // Ajout de DOM pour les types react-query/wagmi
+    "noEmit": false // On veut émettre les fichiers pour ce package
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

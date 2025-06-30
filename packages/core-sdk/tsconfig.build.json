@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false, // On veut absolument émettre pour le build
+    "declarationMap": false, // Pas besoin de sourcemaps pour les declarations pour l'instant
+    "sourceMap": false // Pas de sourcemaps dans la dist pour l'instant pour simplifier
+  },
+  "include": ["src"], // On ne build que ce qui est dans src
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"] // Exclure les tests
+}

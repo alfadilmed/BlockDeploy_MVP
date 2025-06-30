@@ -1,0 +1,63 @@
+name: BlockDeploy CI
+
+on:
+  push:
+    branches:
+      - main # ou master, selon votre branche principale
+  pull_request:
+    branches:
+      - main # ou master
+
+jobs:
+  build_and_lint:
+    name: Build, Lint, Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x] # Utilisez la version de Node.js spécifiée dans vos prérequis
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn' # Activer le cache pour Yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile # --frozen-lockfile est important pour la CI
+
+      - name: Lint project
+        run: yarn lint
+
+      - name: Build Core SDK
+        run: yarn workspace @blockdeploy/core-sdk build
+
+      - name: Build Landing Page
+        run: yarn workspace landing build
+
+      - name: Run tests
+        run: yarn test --ci --coverage --silent # Exécute les tests en mode CI, génère la couverture et réduit la verbosité
+        env:
+          CI: true # Certaines bibliothèques utilisent cette variable pour optimiser pour la CI
+
+      # L'étape de déploiement pour la landing page (ex: vers Vercel)
+      # serait ajoutée ici, conditionnée à un push sur la branche principale.
+      # Exemple pour Vercel (nécessite configuration des secrets VERCEL_ORG_ID, VERCEL_PROJECT_ID, VERCEL_TOKEN):
+      # - name: Deploy Landing Page to Vercel
+      #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      #   uses: amondnet/vercel-action@v20 # Ou l'action officielle de Vercel
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: '--prod' # Déploie en production
+      #     working-directory: ./apps/landing # Spécifie le répertoire de l'app Next.js
+      #     scope: ${{ secrets.VERCEL_ORG_ID }} # scope est souvent l'org id pour les équipes
+      #     alias-domains: | # Optionnel: pour assigner des domaines alias
+      #       blockdeploy.io
+      #       www.blockdeploy.io
+      #     github-comment: false # Désactiver les commentaires sur les PRs par l'action Vercel si non souhaité
