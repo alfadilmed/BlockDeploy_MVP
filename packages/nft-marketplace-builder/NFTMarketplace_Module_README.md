@@ -230,6 +230,10 @@ Similaires au Token Creator :
 *   Focus sur la sécurité des contrats.
 *   Assurer la modularité entre le contrat de marketplace et les contrats de collection.
 
+Le NFT Marketplace Builder est une application principale de la plateforme BlockDeploy, accessible sur `https://app.blockdeploy.io/nft-marketplace-builder` (ou une route similaire).
+Les marketplaces générées seront accessibles via des routes spécifiques, par exemple `https://app.blockdeploy.io/marketplaces/:marketplaceId`.
+Le développement local implique de lancer le backend du builder et le frontend de la plateforme principale.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

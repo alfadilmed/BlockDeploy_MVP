@@ -229,6 +229,9 @@ Similaires aux modules précédents :
 *   Prioriser la sécurité et la clarté des contrats et des interfaces.
 *   Documenter toute nouvelle fonctionnalité.
 
+Le Launchpad est une application principale de la plateforme BlockDeploy, accessible sur `https://app.blockdeploy.io/launchpad` (ou une route similaire).
+Le développement local implique de lancer le backend du Launchpad et le frontend de la plateforme principale.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

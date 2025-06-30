@@ -187,6 +187,9 @@ Un fichier `sample-assistant-dialogue.json` ou `.md` illustrera un échange type
 *   Proposer des scénarios de dialogue et des améliorations pour les prompts.
 *   Participer au développement du mock ou à l'intégration future du LLM.
 
+L'assistant IA sera accessible via la plateforme BlockDeploy sur `https://app.blockdeploy.io`.
+Les développements et tests locaux se font en lançant le backend de l'assistant et le frontend de la plateforme principale.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

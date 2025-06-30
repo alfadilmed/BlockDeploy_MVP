@@ -249,6 +249,9 @@ Similaires aux modules précédents.
 *   Focus sur la sécurité et la robustesse des mécanismes de gouvernance.
 *   Assurer la clarté des interfaces pour des processus complexes.
 
+Le DAO Builder est une application principale de la plateforme BlockDeploy, accessible sur `https://app.blockdeploy.io/dao-builder` (ou une route similaire).
+Le développement local implique de lancer le backend du DAO Builder et le frontend de la plateforme principale.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

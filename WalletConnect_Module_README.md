@@ -193,6 +193,7 @@ cd packages/walletconnect-module # ou chemin équivalent
 yarn install # ou npm install
 ```
 Dépendances principales : `@walletconnect/web3modal`, `@walletconnect/sign-client` (ou équivalents v2), `ethers` ou `viem`.
+Ce module est utilisé par la plateforme applicative BlockDeploy sur `https://app.blockdeploy.io`.
 
 ## 9. Tests
 

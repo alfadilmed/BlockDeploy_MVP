@@ -166,6 +166,9 @@ Voir le document `BlocsMarketplace_Wireframes_ASCII.md`.
 *   Assurer la compatibilité des Blocs avec le Drag & Drop Builder.
 *   Maintenir une documentation claire pour le format des Blocs.
 
+La Blocs Marketplace sera une fonctionnalité intégrée à la plateforme BlockDeploy, accessible via `https://app.blockdeploy.io`.
+Pour le développement local, le frontend de la marketplace est généralement lancé conjointement avec le Drag & Drop Builder et la plateforme principale.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

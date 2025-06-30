@@ -143,7 +143,9 @@ yarn install # ou npm install
 # Lancer le serveur de développement
 yarn dev # ou npm run dev
 ```
-Le site sera alors accessible sur `http://localhost:3000` (ou un autre port si configuré).
+Le site sera alors accessible localement, généralement sur `http://localhost:3000`.
+La version de production de la landing page est hébergée sur `https://blockdeploy.io`.
+L'application principale BlockDeploy est accessible sur `https://app.blockdeploy.io`.
 
 ## 8. Tests
 

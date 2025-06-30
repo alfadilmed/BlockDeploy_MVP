@@ -163,11 +163,11 @@ yarn install
 # Lancer le backend du Token Creator
 yarn workspace @blockdeploy/token-creator-backend dev
 
-# Lancer le frontend du Token Creator (ou la plateforme BlockDeploy entière)
-yarn workspace @blockdeploy/token-creator-frontend dev
-# ou
-yarn workspace @blockdeploy/platform dev # (si le frontend est intégré)
+# Lancer le frontend de la plateforme BlockDeploy (qui intègre le Token Creator)
+yarn workspace @blockdeploy/platform dev # ou le nom du package frontend principal
 ```
+Le Token Creator est une application principale de la plateforme BlockDeploy, accessible sur `https://app.blockdeploy.io/token-creator` (ou une route similaire).
+Lors du développement local, le frontend est généralement celui de la plateforme globale qui appelle le backend spécifique du Token Creator.
 
 ## 12. Tests (Stratégie Initiale)
 

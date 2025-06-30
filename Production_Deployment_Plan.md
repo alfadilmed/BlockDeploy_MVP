@@ -80,24 +80,24 @@ Ce document décrit la stack technique finale, l'infrastructure, et les étapes 
 
 ## 3. Préparation DNS et Sous-Domaine
 
-*   **Domaine principal :** `blockdeploy.io` (supposé déjà acquis et géré par Primex Software)
-*   **Sous-domaine pour l'application (MVP V1) :** `app.blockdeploy.io`
-*   **Landing Page / Site Vitrine :** `www.blockdeploy.io` ou `blockdeploy.io`
+*   **Domaine principal pour la Landing Page / Site Vitrine :** `https://blockdeploy.io` (géré par Primex Software)
+*   **Sous-domaine pour l'application (MVP V1) :** `https://app.blockdeploy.io`
+*   **API principale :** `https://api.blockdeploy.io` (nom de domaine à confirmer et configurer si différent de app)
 
 ### Actions DNS :
 *   **Responsable :** DevOps, Tech Lead
-1.  [ ] **Pour `app.blockdeploy.io` :**
-    *   Si utilisation de Vercel/Netlify : Configurer un enregistrement `CNAME` ou `ALIAS` pointant vers le domaine fourni par la plateforme d'hébergement.
+1.  [ ] **Pour `https://app.blockdeploy.io` (Plateforme dApp) :**
+    *   Si utilisation de Vercel/Netlify : Configurer un enregistrement `CNAME` ou `ALIAS` pour `app` pointant vers le domaine fourni par la plateforme d'hébergement.
         *   Exemple Vercel : `app.blockdeploy.io CNAME cname.vercel-dns.com.`
-    *   Si hébergement auto-géré : Configurer un enregistrement `A` pointant vers l'IP du load balancer du frontend.
-2.  [ ] **Pour `www.blockdeploy.io` (Landing Page) :**
-    *   Configurer les enregistrements `A` ou `CNAME` selon l'hébergement de la landing page (peut être différent de l'app).
-3.  [ ] **Pour `blockdeploy.io` (apex domain) :**
-    *   Configurer pour rediriger vers `www.blockdeploy.io` ou pointer directement vers la landing page (selon la stratégie SEO et hébergement). Utiliser `ALIAS`, `ANAME`, ou `A` records.
+    *   Si hébergement auto-géré : Configurer un enregistrement `A` pour `app` pointant vers l'IP du load balancer du frontend.
+2.  [ ] **Pour `https://blockdeploy.io` (Landing Page) :**
+    *   Configurer les enregistrements `A` ou `CNAME` pour le domaine apex (`@`) et `www` (si `www.blockdeploy.io` redirige vers `blockdeploy.io` ou sert le même contenu) selon l'hébergement de la landing page.
+3.  [ ] **Pour `https://api.blockdeploy.io` (API Backend) :**
+    *   Configurer un enregistrement `A` ou `CNAME` pour `api` pointant vers l'IP du load balancer du backend ou le service d'hébergement de l'API.
 4.  [ ] **Certificats SSL/TLS :**
-    *   S'assurer que des certificats SSL valides sont générés et automatiquement renouvelés pour tous les domaines et sous-domaines (généralement géré par Vercel, Cloudflare, AWS ACM).
+    *   S'assurer que des certificats SSL valides sont générés et automatiquement renouvelés pour `blockdeploy.io`, `app.blockdeploy.io`, et `api.blockdeploy.io` (généralement géré par Vercel, Cloudflare, AWS ACM, ou l'hébergeur de l'API).
 5.  [ ] **Configuration Email (MX, SPF, DKIM, DMARC) :**
-    *   Vérifier que les enregistrements DNS pour les services d'email (ex: Google Workspace, SendGrid) sont correctement configurés pour `blockdeploy.io` afin d'assurer la délivrabilité des emails transactionnels et marketing.
+    *   Vérifier que les enregistrements DNS pour les services d'email (ex: Google Workspace, SendGrid) sont correctement configurés pour le domaine `blockdeploy.io` afin d'assurer la délivrabilité des emails transactionnels et marketing.
 6.  [ ] **Propagation DNS :**
     *   Prévoir un délai pour la propagation DNS (peut prendre de quelques minutes à plusieurs heures). Utiliser des outils comme `dnschecker.org` pour vérifier. Planifier le déploiement en conséquence.
 

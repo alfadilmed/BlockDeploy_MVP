@@ -207,6 +207,9 @@ Voir le document `DragDropBuilder_Wireframes_ASCII.md`.
 *   Focus sur la maintenabilité de la logique de l'état de l'éditeur.
 *   Assurer que les nouveaux composants de palette sont bien testables et configurables.
 
+Le Drag & Drop Builder est une fonctionnalité centrale de BlockDeploy, accessible via la plateforme `https://app.blockdeploy.io`.
+Le développement local se fait en lançant le frontend de la plateforme principale qui intègre cet éditeur.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

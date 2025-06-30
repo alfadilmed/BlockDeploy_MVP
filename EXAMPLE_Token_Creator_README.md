@@ -104,7 +104,8 @@ yarn start
 cd packages/token-creator/backend
 yarn dev
 ```
-Consultez le README global pour lancer l'ensemble de la plateforme BlockDeploy.
+Consultez le README global pour lancer l'ensemble de la plateforme BlockDeploy en local.
+La version de production du Token Creator est accessible via la plateforme principale sur `https://app.blockdeploy.io`.
 
 ## 7. Structure du Module (`packages/token-creator`)
 ```

@@ -182,6 +182,9 @@ Voir le document `SmartContractAuditor_Wireframes_ASCII.md`.
 *   Focus sur la clarté et l'aspect pédagogique des rapports.
 *   Contribuer à l'amélioration du script mock ou à l'intégration des vrais outils.
 
+L'Auditeur de Smart Contract sera une fonctionnalité de la plateforme BlockDeploy, accessible via `https://app.blockdeploy.io`.
+Le développement local se fait en lançant le backend de l'auditeur et le frontend de la plateforme principale.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

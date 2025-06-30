@@ -12,7 +12,7 @@ L'objectif principal de cette phase de beta est de :
 
 ## 2. Accès à la plateforme
 
-*   **URL d'accès :** `https://beta.primex-software.com`
+*   **URL d'accès :** `https://beta.app.blockdeploy.io` (URL à confirmer pour la phase Beta, pourrait être directement `https://app.blockdeploy.io` avec accès contrôlé)
 *   **Comptes de test :** Vous pouvez créer un compte directement via le formulaire d'inscription ou utiliser les options OAuth (Google, GitHub).
 *   **Testnet (pour fonctionnalités Blockchain si applicable) :** Sepolia. Un faucet ou des instructions pour obtenir des tokens de test seront fournis si nécessaire pour tester des fonctionnalités spécifiques.
 

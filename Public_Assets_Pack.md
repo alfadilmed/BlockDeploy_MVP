@@ -12,13 +12,13 @@ Ce document centralise les liens vers les ressources marketing et communication 
 |                   | _Emplacement source :_ `[Lien Google Drive/Notion]`        |               |                  |                                                                       |
 | **Demo Vidéo**    | `[Lien YouTube/Vimeo de la démo principale V1]`          | `🟡 En cours`   | Product Team     | Scénario défini, tournage prévu S-1. Durée cible : 2-3 min.        |
 |                   | _Scripts/Storyboards :_ `[Lien Google Drive/Notion]`     |               |                  | Sous-titres multilingues (EN, FR) à prévoir.                         |
-| **Landing Page**  | `https://www.blockdeploy.io` (ou `https://blockdeploy.io`) | `🟠 Prête p. revue`| Web Team         | Contenu mis à jour avec les fonctionnalités V1. SEO de base optimisé. |
+| **Landing Page**  | `https://blockdeploy.io`                                 | `🟠 Prête p. revue`| Web Team         | Contenu mis à jour avec les fonctionnalités V1. SEO de base optimisé. |
 |                   | _Lien de prévisualisation :_ `[Lien Vercel/Staging]`       |               |                  | Formulaire de contact/newsletter fonctionnel.                       |
-| **Kit Presse**    | `[Lien vers dossier Kit Presse]` (Logo, Banners, Description) | `🟡 À créer`    | Marketing Lead   | Contenus à rédiger : communiqué de presse type, Q&A.                  |
+| **Kit Presse**    | `[Lien vers dossier Kit Presse sur blockdeploy.io/press]` (Logo, Banners, Description) | `🟡 À créer`    | Marketing Lead   | Contenus à rédiger : communiqué de presse type, Q&A.                  |
 |                   | _Emplacement source :_ `[Lien Google Drive/Notion]`        |               |                  |                                                                       |
-| **Blog Posts**    | `[Lien vers article "Lancement de BlockDeploy V1"]`      | `🟡 À rédiger`  | Content Manager  |                                                                       |
-|                   | `[Lien vers article "Guide : Démarrer avec BlockDeploy"]`| `🟡 À rédiger`  | Content Manager  |                                                                       |
-| **FAQ Publique**  | `https://blockdeploy.io/faq` (ou section de la landing)  | `🟠 Prête p. revue`| Support Team     | Basée sur `MVP_Completion_Checklist.md` et retours beta.           |
+| **Blog Posts**    | `https://blockdeploy.io/blog/lancement-blockdeploy-v1`      | `🟡 À rédiger`  | Content Manager  |                                                                       |
+|                   | `https://blockdeploy.io/blog/guide-demarrer-blockdeploy`| `🟡 À rédiger`  | Content Manager  |                                                                       |
+| **FAQ Publique**  | `https://blockdeploy.io/faq`                             | `🟠 Prête p. revue`| Support Team     | Basée sur `MVP_Completion_Checklist.md` et retours beta.           |
 
 **Légende Statut :**
 *   `✅ Prêt`: Ressource finalisée et validée.

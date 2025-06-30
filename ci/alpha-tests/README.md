@@ -165,7 +165,7 @@ Un fichier comme `ci-job-config.yml` (ou intégré dans `.github/workflows/`) d�
         // import { sleep, check } from 'k6';
         // export const options = { stages: [{ duration: '1m', target: 20 }, { duration: '2m', target: 20 }] };
         // export default function () {
-        //   const res = http.get('https://test.blockdeploy.com/api/v1/launchpad/sales');
+        //   const res = http.get('https://api.blockdeploy.io/v1/launchpad/sales'); // Utiliser l'URL de l'API de config/urls.json
         //   check(res, { 'status was 200': (r) => r.status == 200 });
         //   sleep(1);
         // }

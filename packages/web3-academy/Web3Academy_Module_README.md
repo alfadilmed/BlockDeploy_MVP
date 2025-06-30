@@ -184,6 +184,9 @@ Des fichiers Markdown exemples seront créés dans `packages/web3-academy/conten
 *   Mettre en place un processus de revue et de validation pour les nouveaux contenus.
 *   Faciliter la contribution pour les experts internes et potentiellement externes.
 
+La Web3 Academy sera accessible via la plateforme BlockDeploy, probablement sur une route comme `https://app.blockdeploy.io/academy` ou un sous-domaine dédié type `https://academy.blockdeploy.io` (à confirmer, pour l'instant on part sur une intégration à `app.blockdeploy.io`).
+Le développement local se fait en lançant le frontend de la plateforme principale qui intègre les pages de l'académie.
+
 ---
 **Signé : Team Primex Software – https://primex-software.com**
 ```

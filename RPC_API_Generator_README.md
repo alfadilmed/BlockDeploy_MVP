@@ -258,6 +258,8 @@ yarn install # ou npm install / go mod download
 
 yarn dev # ou go run main.go
 ```
+Les endpoints RPC managés par BlockDeploy sont accessibles via `https://rpc.blockdeploy.io/{chainId}` (nom d'hôte à confirmer/adapter selon `config/urls.json`, potentiellement `api.blockdeploy.io/rpc/...`).
+L'interface de gestion des clés API BlockDeploy sera intégrée à la plateforme principale sur `https://app.blockdeploy.io`.
 
 ## 10. Tests
 
