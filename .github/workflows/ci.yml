@@ -88,8 +88,8 @@ jobs:
       # 1. Avoir un compte Vercel et un projet Vercel créé pour l'application 'landing'.
       # 2. Configurer les secrets GitHub suivants pour votre dépôt :
       #    - VERCEL_TOKEN : Votre token d'accès Vercel.
-      #    - VERCEL_ORG_ID : L'ID de votre organisation sur Vercel.
-      #    - VERCEL_PROJECT_ID_LANDING : L'ID du projet Vercel pour 'apps/landing'.
+      #    - VERCEL_ORG_ID : L'ID de votre organisation sur Vercel (utilisé comme 'scope' et pour les équipes).
+      #    - VERCEL_PROJECT_ID_LANDING : L'ID du projet Vercel spécifique à 'apps/landing'.
       # 3. Configuration du projet sur Vercel (pour 'apps/landing') :
       #    - Framework Preset: Next.js
       #    - Root Directory: apps/landing  (TRÈS IMPORTANT)
@@ -114,16 +114,24 @@ jobs:
   deploy_token_creator:
     name: Deploy Token Creator dApp
     needs: build_and_lint
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') # Ou une branche 'staging'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') # Déclencher sur push à main/master
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # PREREQUIS pour le déploiement Vercel de Token Creator :
-      # 1. Projet Vercel créé pour 'apps/token-creator'.
-      # 2. Secret GitHub VERCEL_PROJECT_ID_TOKEN_CREATOR.
-      # 3. Configuration Vercel (Root Directory: apps/token-creator, etc. comme pour landing).
+      # 1. Avoir un compte Vercel et un projet Vercel créé pour l'application 'token-creator'.
+      # 2. Configurer les secrets GitHub suivants pour votre dépôt :
+      #    - VERCEL_TOKEN : Votre token d'accès Vercel.
+      #    - VERCEL_ORG_ID : L'ID de votre organisation sur Vercel.
+      #    - VERCEL_PROJECT_ID_TOKEN_CREATOR : L'ID du projet Vercel spécifique à 'apps/token-creator'.
+      # 3. Configuration du projet sur Vercel (pour 'apps/token-creator') :
+      #    - Framework Preset: Next.js
+      #    - Root Directory: apps/token-creator
+      #    - Build Command: (laisser Vercel détecter ou `yarn workspace token-creator build`)
+      #    - Install Command: (comme pour landing, Vercel doit pouvoir builder le SDK ou l'installer)
+      #    - Variables d'environnement du projet Vercel (ex: NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID)
 
       - name: Deploy Token Creator to Vercel
         uses: amondnet/vercel-action@v20
@@ -131,7 +139,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_TOKEN_CREATOR }}
-          vercel-args: '--prod' # Pourrait être un domaine de staging
+          vercel-args: '--prod' # Déploie en production. Pour Staging, Vercel utilise les Preview Deployments par défaut pour les PRs/branches.
           working-directory: ./apps/token-creator
           scope: ${{ secrets.VERCEL_ORG_ID }}
           github-comment: false
@@ -139,16 +147,19 @@ jobs:
   deploy_launchpad:
     name: Deploy Launchpad dApp
     needs: build_and_lint
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') # Ou une branche 'staging'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') # Déclencher sur push à main/master
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # PREREQUIS pour le déploiement Vercel de Launchpad :
-      # 1. Projet Vercel créé pour 'apps/launchpad'.
-      # 2. Secret GitHub VERCEL_PROJECT_ID_LAUNCHPAD.
-      # 3. Configuration Vercel (Root Directory: apps/launchpad, etc. comme pour landing).
+      # 1. Avoir un compte Vercel et un projet Vercel créé pour l'application 'launchpad'.
+      # 2. Configurer les secrets GitHub suivants : VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID_LAUNCHPAD.
+      # 3. Configuration du projet sur Vercel (pour 'apps/launchpad') :
+      #    - Framework Preset: Next.js
+      #    - Root Directory: apps/launchpad
+      #    - etc. (similaire à la configuration de 'landing' et 'token-creator')
 
       - name: Deploy Launchpad dApp to Vercel
         uses: amondnet/vercel-action@v20
@@ -156,7 +167,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_LAUNCHPAD }}
-          vercel-args: '--prod' # Pourrait être un domaine de staging
+          vercel-args: '--prod'
           working-directory: ./apps/launchpad
           scope: ${{ secrets.VERCEL_ORG_ID }}
           github-comment: false

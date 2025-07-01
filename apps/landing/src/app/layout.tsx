@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { BlockDeployProviders } from '@blockdeploy/core-sdk';
 import Script from 'next/script'; // Pour le script d'analyse
+import AlphaBanner from '@/components/common/AlphaBanner'; // Importer le bandeau
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -42,6 +43,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} flex flex-col min-h-screen`}>
         <BlockDeployProviders>
+          <AlphaBanner /> {/* Ajouter le bandeau ici */}
           <Header />
           <main className="flex-grow container mx-auto px-4 py-8">
             {children}
