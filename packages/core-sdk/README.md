@@ -10,8 +10,12 @@ Ce package contient le SDK principal pour interagir avec les fonctionnalités We
     *   [Mise en Place du Provider](#mise-en-place-du-provider)
     *   [Hooks Disponibles](#hooks-disponibles)
         *   [`useBlockDeployWallet`](#useblockdeploywallet)
+        *   [`useBdpTokenBalance`](#usebdptokenbalance)
+        *   [`useDeployToken`](#usedeploytoken)
+        *   [`useBlockDeployContractRead`](#useblockdeploycontractread) (et autres placeholders)
         *   [`useBlockDeploySendTransaction`](#useblockdeploysendtransaction)
-4.  [Configuration](#configuration)
+4.  [Artefacts de Contrat](#artefacts-de-contrat)
+5.  [Configuration](#configuration)
     *   [Variables d'Environnement](#variables-denvironnement)
 5.  [Développement](#développement)
     *   [Scripts](#scripts)
@@ -118,11 +122,139 @@ function WalletInfo() {
 ```
 
 **Valeurs Retournées par `useBlockDeployWallet`:**
-Consultez le fichier `packages/core-sdk/src/hooks.ts` (interface `UseBlockDeployWalletReturn`) pour la structure détaillée.
+Consultez `packages/core-sdk/src/hooks.ts` (interface `UseBlockDeployWalletReturn`) pour la structure détaillée.
+
+
+#### `useBdpTokenBalance`
+
+Hook dédié pour récupérer le solde du token $BDPY pour une adresse donnée (par défaut l'adresse connectée).
+
+```tsx
+import { useBdpTokenBalance } from '@blockdeploy/core-sdk';
+
+function BdpyBalanceInfo() {
+  const { account } = useBlockDeployWallet(); // Pour obtenir l'adresse si non passée au hook
+  const { balance, isLoading, isError, error } = useBdpTokenBalance({ address: account.address });
+  // ou simplement useBdpTokenBalance() pour le compte connecté.
+
+  if (isLoading) return <p>Chargement du solde $BDPY...</p>;
+  if (isError) return <p>Erreur de chargement du solde $BDPY: {error?.message}</p>;
+
+  return (
+    <p>
+      Solde $BDPY : {balance ? `${balance.formatted} ${balance.symbol}` : 'Non disponible'}
+    </p>
+  );
+}
+```
+**Arguments Optionnels pour `useBdpTokenBalance`:**
+*   `address?: 0x${string}`: L'adresse pour laquelle récupérer le solde. Par défaut, l'adresse du portefeuille connecté.
+*   `chainId?: number`: L'ID de la chaîne sur laquelle vérifier le solde. Par défaut, la chaîne du portefeuille connecté.
+
+**Valeurs Retournées :**
+*   `balance?: { decimals, formatted, symbol, value }`: Informations sur le solde du token $BDPY.
+*   `isLoading: boolean`: État de chargement.
+*   `isError: boolean`: Si une erreur est survenue.
+*   `error: Error | null`: L'objet d'erreur.
+
+
+#### `useDeployToken`
+
+Hook pour déployer un nouveau contrat (par exemple, un token ERC-20).
+
+```tsx
+import { useDeployToken, minimalERC20Abi, minimalERC20Bytecode, DeployTokenArgs } from '@blockdeploy/core-sdk';
+import { parseUnits } from 'ethers'; // Ou un utilitaire viem
+
+function DeployComponent() {
+  const {
+    deployToken,
+    deployTxHash,
+    isDeploying,
+    isConfirming,
+    isConfirmed,
+    contractAddress,
+    deployError,
+    confirmationError
+  } = useDeployToken();
+
+  const handleDeploy = async () => {
+    const name = "My Test Token";
+    const symbol = "MTT";
+    const initialSupplyRaw = "1000000"; // Unités entières
+    const decimals = 18; // Assurez-vous que le bytecode est compilé pour ces décimales
+
+    // Convertir la supply avec les décimales
+    const initialSupplyWithDecimals = parseUnits(initialSupplyRaw, decimals);
+
+    const args: DeployTokenArgs = {
+      name,
+      symbol,
+      initialSupply: initialSupplyWithDecimals,
+      contractAbi: minimalERC20Abi,
+      contractBytecode: minimalERC20Bytecode, // REMPLACER PAR UN VRAI BYTECODE EN PRODUCTION
+    };
+    await deployToken(args);
+  };
+
+  return (
+    <div>
+      <button onClick={handleDeploy} disabled={isDeploying || isConfirming}>
+        {isDeploying ? 'Déploiement...' : (isConfirming ? 'Confirmation...' : 'Déployer Token')}
+      </button>
+      {deployTxHash && <p>Hash de Transaction : {deployTxHash}</p>}
+      {contractAddress && <p>Contrat Déployé : {contractAddress}</p>}
+      {deployError && <p>Erreur de déploiement : {deployError.message}</p>}
+      {confirmationError && <p>Erreur de confirmation : {confirmationError.message}</p>}
+      {isConfirmed && contractAddress && <p>Déploiement confirmé !</p>}
+    </div>
+  );
+}
+```
+**Arguments pour `deployToken(args: DeployTokenArgs)`:**
+*   `name: string`: Nom du token.
+*   `symbol: string`: Symbole du token.
+*   `initialSupply: bigint`: Supply initiale (déjà ajustée avec les décimales).
+*   `contractAbi: Abi`: ABI du contrat à déployer.
+*   `contractBytecode: 0x${string}`: Bytecode du contrat à déployer.
+
+**Valeurs Retournées :**
+*   `deployToken: (args: DeployTokenArgs) => Promise<void>`: Fonction pour initier le déploiement.
+*   `deployTxHash?: 0x${string}`: Hash de la transaction de déploiement.
+*   `isDeploying: boolean`: Vrai si la transaction est en cours d'envoi au portefeuille / en attente de signature.
+*   `deployError?: Error | null`: Erreur lors de l'initiation du déploiement.
+*   `isConfirming: boolean`: Vrai pendant que la transaction est minée.
+*   `isConfirmed: boolean`: Vrai quand la transaction est confirmée.
+*   `confirmationError?: Error | null`: Erreur lors de la phase de confirmation.
+*   `contractAddress?: 0x${string}`: Adresse du contrat déployé.
+*   `receipt?: TransactionReceipt`: Reçu complet de la transaction.
+
+
+#### `useBlockDeployContractRead` (Implémentation de Base)
+
+Hook pour lire des données d'un smart contract.
+```tsx
+import { useBlockDeployContractRead, minimalERC20Abi } from '@blockdeploy/core-sdk';
+
+function TokenName({ contractAddress }) {
+  const { data: name, isLoading, error } = useBlockDeployContractRead({
+    address: contractAddress,
+    abi: minimalERC20Abi,
+    functionName: 'name',
+    enabled: !!contractAddress, // Exécuter seulement si l'adresse est fournie
+  });
+
+  if (isLoading) return <p>Chargement du nom...</p>;
+  if (error) return <p>Erreur: {error.message}</p>;
+  return <p>Nom du Token: {String(name)}</p>;
+}
+```
+Consultez `packages/core-sdk/src/types.ts` (interface `ContractReadOptions`) et `contracts.ts` pour plus de détails. Les placeholders pour `useBlockDeployContractWrite` et `useBlockDeployContractEvent` existent aussi.
+
 
 #### `useBlockDeploySendTransaction`
 
-Hook pour envoyer des transactions.
+Hook pour envoyer des transactions simples (transfert d'ETH par exemple).
 ```tsx
 import { useBlockDeploySendTransaction } from '@blockdeploy/core-sdk';
 import { parseEther } from 'ethers'; // ethers v6
@@ -153,7 +285,17 @@ function SendTxComponent() {
 }
 ```
 
-## 4. Configuration
+## 4. Artefacts de Contrat
+
+Le SDK exporte également des ABIs et (placeholders de) bytecodes pour certains contrats standards.
+
+*   **`minimalERC20Abi`**: ABI pour un contrat ERC-20 de base.
+*   **`minimalERC20Bytecode`**: **Placeholder de bytecode** pour un contrat ERC-20.
+    **ATTENTION : Ce bytecode est un placeholder et DOIT être remplacé par un bytecode réel et compilé pour que la fonctionnalité de déploiement de token (`useDeployToken`) soit opérationnelle.** Un avertissement est émis dans la console si ce placeholder est utilisé.
+
+Ces artefacts se trouvent dans `packages/core-sdk/src/contracts/abis/MinimalERC20.ts`.
+
+## 5. Configuration
 
 La configuration de `wagmi` (chaînes, providers, connecteurs) se trouve dans `packages/core-sdk/src/config.ts`.
 

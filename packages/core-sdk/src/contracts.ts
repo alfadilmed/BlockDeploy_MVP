@@ -27,26 +27,31 @@ import { Abi } from 'viem';
  */
 export function useBlockDeployContractRead<
   TAbi extends Abi | readonly unknown[] = Abi,
-  TFunctionName extends string = string, // Simplifié pour le placeholder
->(options: ContractReadOptions<TAbi, any /* TFunctionName pour wagmi */>) {
-  // TODO: Implémenter la logique en utilisant useWagmiReadContract
-  // Exemple basique (nécessitera d'adapter les types d'options):
-  // return useWagmiReadContract({
-  //   address: options.address,
-  //   abi: options.abi,
-  //   functionName: options.functionName,
-  //   args: options.args,
-  //   chainId: options.chainId,
-  //   // ...autres options si nécessaires
-  // });
+  TFunctionName extends ExtractAbiFunctionNames<TAbi, 'pure' | 'view'>, // Utiliser le type wagmi correct
+>(
+  options: ContractReadOptions<TAbi, TFunctionName> & { enabled?: boolean } // Ajout de 'enabled' pour le contrôle conditionnel
+) {
+  const { address, abi, functionName, args, chainId, enabled = true } = options;
+  const { data, error, isLoading, isFetching, refetch, status, fetchStatus } = useWagmiReadContract({
+    address: address,
+    abi: abi,
+    functionName: functionName as any, // Cast 'as any' car TFunctionName peut être trop restrictif ici pour l'usage direct
+    args: args as any, // Cast 'as any' pour la même raison
+    chainId: chainId,
+    query: {
+      enabled: enabled && !!address && !!abi && !!functionName, // Le hook s'exécute si enabled ET les params de base sont là
+    },
+    // ...autres options de wagmi peuvent être passées ici si elles sont ajoutées à ContractReadOptions
+  });
 
-  console.warn('useBlockDeployContractRead is a placeholder and not yet implemented.');
   return {
-    data: undefined,
-    error: null,
-    isLoading: false,
-    isFetching: false,
-    refetch: () => Promise.resolve({ data: undefined }),
+    data,
+    error: error instanceof Error ? error : null,
+    isLoading, // isLoading de la requête initiale
+    isFetching, // isFetching pour les refetches en arrière-plan
+    status, // 'idle' | 'pending' | 'success' | 'error'
+    fetchStatus, // 'idle' | 'fetching' | 'paused'
+    refetch,
   };
 }
 
@@ -112,4 +117,81 @@ export function useBlockDeployContractEvent<
   // });
   console.warn('useBlockDeployContractEvent is a placeholder and not yet implemented.');
   // Ce hook ne retourne généralement rien, il déclenche un callback.
+}
+
+// --- Hook pour le déploiement de contrat ---
+
+/**
+ * Arguments pour le hook useDeployToken.
+ */
+export interface DeployTokenArgs {
+  name: string;
+  symbol: string;
+  initialSupply: bigint; // Doit être déjà ajusté avec les décimales
+  // decimals: number; // Les décimales sont souvent fixées dans le contrat, mais si le bytecode l'attend, ajoutez ici.
+  contractAbi: Abi;
+  contractBytecode: `0x${string}`;
+}
+
+/**
+ * Hook pour déployer un contrat de token (ou tout autre contrat).
+ * Encapsule useWriteContract et useWaitForTransactionReceipt pour le déploiement.
+ */
+export function useDeployToken() {
+  const {
+    data: deployTxHash,
+    error: deployError,
+    isPending: isDeploying,
+    writeContractAsync // Renommé pour clarté, anciennement writeContract (synchrone)
+  } = useWagmiWriteContract();
+
+  const {
+    data: receipt,
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+    error: confirmationError
+  } = useWaitForTransactionReceipt({
+    hash: deployTxHash,
+    query: { enabled: !!deployTxHash } // N'exécute que si hash est défini
+  });
+
+  const deployToken = async (args: DeployTokenArgs) => {
+    if (!args.contractBytecode || !args.contractAbi) {
+      console.error("ABI et Bytecode sont requis pour le déploiement.");
+      // On pourrait throw une erreur ici ou retourner un état d'erreur spécifique
+      return;
+    }
+    try {
+      // Pour le déploiement, `abi` est l'ABI du contrat, `bytecode` est le code compilé,
+      // et `args` sont les arguments du constructeur.
+      // `functionName` n'est pas utilisé pour le déploiement avec writeContract.
+      // La transaction de déploiement n'a pas de `to`, elle a un champ `data` qui est le bytecode
+      // optionnellement suivi des arguments du constructeur encodés.
+      // Wagmi gère cela en interne si on passe `bytecode` et `args`.
+      await writeContractAsync({
+        abi: args.contractAbi,
+        bytecode: args.contractBytecode,
+        args: [args.name, args.symbol, args.initialSupply], // Arguments du constructeur
+        // value: 0n, // Si le constructeur est payable
+        // chainId: args.chainId, // Si on veut forcer une chaîne
+      });
+    } catch (e) {
+      // L'erreur est déjà gérée par deployError de useWriteContract,
+      // mais on peut la logguer ou la traiter spécifiquement ici si besoin.
+      console.error("Erreur lors de l'initiation du déploiement:", e);
+      // Pas besoin de throw ici car useWriteContract met à jour son propre état d'erreur.
+    }
+  };
+
+  return {
+    deployToken,
+    deployTxHash,
+    isDeploying, // True quand la transaction est envoyée au wallet / en attente de signature
+    deployError,
+    isConfirming, // True pendant que la transaction est minée
+    isConfirmed,  // True quand la transaction est confirmée
+    confirmationError,
+    contractAddress: receipt?.contractAddress, // Adresse du contrat déployé
+    receipt, // Reçu complet de la transaction pour plus de détails si besoin
+  };
 }

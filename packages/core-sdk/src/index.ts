@@ -15,8 +15,13 @@ export type { ContractReadOptions, ContractWriteOptions, ContractEventOptions } 
 export {
   useBlockDeployContractRead,
   useBlockDeployContractWrite,
-  useBlockDeployContractEvent
+  useBlockDeployContractEvent,
+  useDeployToken // Exporter le nouveau hook de déploiement
 } from './contracts';
+export type { DeployTokenArgs } from './contracts'; // Exporter le type d'args
+
+// ABIs et Bytecodes (pourraient être dans un sous-export si nombreux)
+export { minimalERC20Abi, minimalERC20Bytecode } from './contracts/abis/MinimalERC20';
 
 // Utilitaires
 export * from './utils';
