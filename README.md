@@ -66,7 +66,7 @@ Les scripts suivants sont disponibles à la racine du monorepo (voir `package.js
 *   `yarn test`: Exécute les tests Jest pour tous les packages.
 *   `yarn coverage`: Exécute les tests Jest et génère un rapport de couverture.
 *   `yarn compile-contracts`: Compile les smart contracts du package `@blockdeploy/smart-contracts` en utilisant Hardhat.
-*   `yarn update-artifacts`: Exécute le script `scripts/update-contract-artifacts.ts` pour compiler les contrats et mettre à jour les fichiers ABI/bytecode dans `@blockdeploy/core-sdk`. **Important à exécuter après chaque modification des contrats Solidity.**
+    "update-artifacts": "Exécute le script `scripts/update-contract-artifacts.ts` pour compiler les contrats et mettre à jour les fichiers ABI/bytecode dans `@blockdeploy/core-sdk`. **Important : Après chaque modification des contrats Solidity, exécutez ce script localement et commitez les artefacts mis à jour. La CI vérifiera cela et échouera si les artefacts ne sont pas à jour.**"
 
 Des scripts spécifiques à chaque package/application sont disponibles dans leurs `package.json` respectifs et peuvent être lancés avec `yarn workspace <nom_du_workspace> <script>`.
 

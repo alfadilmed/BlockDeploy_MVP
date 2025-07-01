@@ -102,6 +102,32 @@ REPORT_GAS=true yarn workspace @blockdeploy/smart-contracts test
 ```
 Cela générera un rapport dans la console (et un fichier si configuré dans `hardhat.config.ts`). Vous pouvez aussi configurer `COINMARKETCAP_API_KEY` pour voir les estimations de coûts en USD.
 
+### Audit Statique avec Slither
+Slither est un outil d'analyse statique pour les contrats Solidity qui peut aider à détecter des vulnérabilités courantes.
+
+**Prérequis :**
+*   Python 3.6+ et pip.
+*   Slither installé : `pip install slither-analyzer`
+
+**Exécution :**
+Naviguez à la racine du package `packages/smart-contracts` et exécutez :
+```bash
+slither .
+# ou pour un contrat spécifique :
+# slither contracts/MinimalERC20.sol
+```
+Cela affichera un rapport dans la console listant les problèmes potentiels, leur impact et leur confiance.
+
+**Interprétation du Rapport :**
+*   **Impact :** Haut, Moyen, Bas, Optimisation, Informatif. Concentrez-vous d'abord sur les impacts Haut et Moyen.
+*   **Confiance :** Haute, Moyenne, Basse. Une confiance élevée signifie que le problème est très probablement réel.
+*   **Description :** Explique la vulnérabilité potentielle.
+*   **Référence :** Souvent un lien vers une description plus détaillée de la vulnérabilité (ex: SWC Registry).
+
+Examinez chaque point signalé. Certains peuvent être des faux positifs, surtout avec une confiance basse. Pour les problèmes réels, comprenez la vulnérabilité et appliquez les corrections recommandées ou les meilleures pratiques.
+
+Il est recommandé d'intégrer Slither (ou un outil similaire) dans votre pipeline CI pour une analyse continue.
+
 ## 6. Contribution
 
 *   Suivez les conventions de nommage et de style pour Solidity.

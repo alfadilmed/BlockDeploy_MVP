@@ -52,38 +52,111 @@ jobs:
       - name: Run Hardhat Tests (Smart Contracts)
         run: yarn workspace @blockdeploy/smart-contracts test
         env:
-          CI: true # Au cas où les tests Hardhat auraient des optimisations pour CI
+          CI: true
+
+      - name: Update Contract Artifacts (ABI/Bytecode)
+        id: update_artifacts
+        run: |
+          yarn update-artifacts
+          echo "SCRIPT_OUTPUT=$(git status --porcelain packages/core-sdk/src/contracts/abis/)" >> $GITHUB_OUTPUT
+          # git status --porcelain affichera les fichiers modifiés. Ex: " M packages/core-sdk/src/contracts/abis/MinimalERC20.ts"
+          # S'il n'y a pas de changements, la sortie sera vide.
+
+      - name: Check for uncommitted artifact changes
+        if: steps.update_artifacts.outputs.SCRIPT_OUTPUT != ''
+        run: |
+          echo "❌ Erreur: Les artefacts de contrat (ABI/Bytecode) ont été modifiés par 'yarn update-artifacts'."
+          echo "Veuillez exécuter 'yarn update-artifacts' localement, commiter les changements et pusher à nouveau."
+          echo "Fichiers modifiés :"
+          echo "${{ steps.update_artifacts.outputs.SCRIPT_OUTPUT }}"
+          exit 1
 
       # --- Déploiement sur Vercel pour apps/landing ---
-      # Cette étape se déclenche uniquement sur un push vers la branche principale (ex: main).
-      # PREREQUIS :
+      # Voir les PREREQUIS dans le job deploy_landing ci-dessous.
+      # Ce job est séparé pour plus de clarté et de contrôle.
+
+  deploy_landing:
+    name: Deploy Landing Page
+    needs: build_and_lint # Dépend du succès du job build_and_lint
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # PREREQUIS pour le déploiement Vercel :
       # 1. Avoir un compte Vercel et un projet Vercel créé pour l'application 'landing'.
       # 2. Configurer les secrets GitHub suivants pour votre dépôt :
       #    - VERCEL_TOKEN : Votre token d'accès Vercel.
-      #    - VERCEL_ORG_ID : L'ID de votre organisation sur Vercel (si vous en utilisez une).
-      #    - VERCEL_PROJECT_ID : L'ID du projet Vercel correspondant à 'apps/landing'.
-      # 3. Configuration du projet sur Vercel :
+      #    - VERCEL_ORG_ID : L'ID de votre organisation sur Vercel.
+      #    - VERCEL_PROJECT_ID_LANDING : L'ID du projet Vercel pour 'apps/landing'.
+      # 3. Configuration du projet sur Vercel (pour 'apps/landing') :
       #    - Framework Preset: Next.js
-      #    - Root Directory: apps/landing  (TRÈS IMPORTANT pour les monorepos)
-      #    - Build Command: `yarn build` (ou Vercel peut le détecter depuis le package.json de apps/landing)
-      #    - Output Directory: Vercel détecte généralement `.next` pour Next.js.
-      #    - Install Command: `yarn install --frozen-lockfile` (ou Vercel gère cela, mais s'assurer qu'il utilise Yarn)
+      #    - Root Directory: apps/landing  (TRÈS IMPORTANT)
+      #    - Build Command: (laisser Vercel détecter ou `yarn workspace landing build`)
+      #    - Install Command: (laisser Vercel détecter ou `yarn install --frozen-lockfile && yarn workspace @blockdeploy/core-sdk build`)
+      #                     Assurez-vous que Vercel build le core-sdk si apps/landing en dépend pour le build.
+      #                     Ou que le SDK est publié et installé comme une dépendance normale.
+      #                     Alternativement, si le SDK est transpilé par Next.js (transpilePackages), seul yarn install suffit.
       #    - Variables d'environnement du projet Vercel (ex: NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID)
 
       - name: Deploy Landing Page to Vercel
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-        uses: amondnet/vercel-action@v20 # Alternative: vercel/actions/deploy@v1
+        uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_LANDING }} # Utiliser un ID de projet spécifique pour la landing page
-          # Vercel CLI arguments
-          vercel-args: '--prod' # Déploie en production sur les domaines assignés
-          # Working directory pour l'application Next.js (apps/landing)
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_LANDING }}
+          vercel-args: '--prod'
           working-directory: ./apps/landing
-          # Scope (souvent l'ID de l'organisation pour les équipes Vercel)
           scope: ${{ secrets.VERCEL_ORG_ID }}
-          # alias-domains: | # Optionnel: pour assigner des domaines alias en production
-          #   blockdeploy.io
-          #   www.blockdeploy.io
-          github-comment: false # Désactiver les commentaires automatiques de Vercel sur les PRs/commits si non souhaité
+          github-comment: false
+
+  deploy_token_creator:
+    name: Deploy Token Creator dApp
+    needs: build_and_lint
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') # Ou une branche 'staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # PREREQUIS pour le déploiement Vercel de Token Creator :
+      # 1. Projet Vercel créé pour 'apps/token-creator'.
+      # 2. Secret GitHub VERCEL_PROJECT_ID_TOKEN_CREATOR.
+      # 3. Configuration Vercel (Root Directory: apps/token-creator, etc. comme pour landing).
+
+      - name: Deploy Token Creator to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_TOKEN_CREATOR }}
+          vercel-args: '--prod' # Pourrait être un domaine de staging
+          working-directory: ./apps/token-creator
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          github-comment: false
+
+  deploy_launchpad:
+    name: Deploy Launchpad dApp
+    needs: build_and_lint
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') # Ou une branche 'staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # PREREQUIS pour le déploiement Vercel de Launchpad :
+      # 1. Projet Vercel créé pour 'apps/launchpad'.
+      # 2. Secret GitHub VERCEL_PROJECT_ID_LAUNCHPAD.
+      # 3. Configuration Vercel (Root Directory: apps/launchpad, etc. comme pour landing).
+
+      - name: Deploy Launchpad dApp to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_LAUNCHPAD }}
+          vercel-args: '--prod' # Pourrait être un domaine de staging
+          working-directory: ./apps/launchpad
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+          github-comment: false
