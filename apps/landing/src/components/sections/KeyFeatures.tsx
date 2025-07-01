@@ -48,12 +48,18 @@ export default function KeyFeatures() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature) => (
             <Card key={feature.title} className="transform hover:scale-105 transition-transform duration-300">
-              <div className="flex flex-col items-center text-center p-2">
-                <span className="text-4xl mb-4">{feature.icon}</span>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{feature.description}</p>
-                {/* <!-- TODO: Insérer ici une capture/GIF/lien démo pour la fonctionnalité {feature.title} --> */}
-                <p className="text-xs text-sky-500 dark:text-sky-400 italic">(Démo visuelle à venir)</p>
+              <div className="flex flex-col items-center text-center p-4 h-full"> {/* h-full pour que les cartes aient la même hauteur si possible */}
+                <span className="text-5xl mb-5">{feature.icon}</span>
+                <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">{feature.title}</h3>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">{feature.description}</p>
+
+                {/* Placeholder pour Média Visuel */}
+                <div className="w-full aspect-video bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center mt-auto">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 p-2">
+                    {/* <!-- TODO: Insérer ici une capture/GIF/lien démo pour la fonctionnalité {feature.title} --> */}
+                    Démo visuelle de {feature.title} à venir bientôt !
+                  </p>
+                </div>
               </div>
             </Card>
           ))}

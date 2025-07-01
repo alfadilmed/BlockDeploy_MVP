@@ -3,12 +3,27 @@ import Card from "@/components/ui/Card";
 
 export default function IcoPage() {
   return (
-    <div className="py-12 md:py-16"> {/* Changé main en div pour flexibilité avec layout global */}
-      <section id="buy" className="mb-16">
+    <div className="py-12 md:py-16">
+      <section id="buy" className="mb-16 container mx-auto px-4 max-w-2xl"> {/* Centrer le simulateur */}
         <IcoPurchaseSimulator />
       </section>
 
-      <section className="container mx-auto px-4">
+      {/* Section Vidéo d'Introduction */}
+      <section className="py-12 md:py-16 bg-gray-50 dark:bg-gray-800/30">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+            Découvrez BlockDeploy en 30 Secondes
+          </h2>
+          <div className="max-w-2xl mx-auto aspect-video bg-gray-300 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+            {/* <!-- TODO: Intégrer ici le lecteur vidéo Loom ou GIF (ex: <iframe ...> ou <video ...>) --> */}
+            <p className="text-gray-600 dark:text-gray-400">
+              (Mini vidéo d'introduction de 30-45 secondes à venir)
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 mt-16"> {/* Espace avant les détails */}
         <div className="text-center mb-10 md:mb-16">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
             Informations sur l'ICO de BlockDeploy ($BDPY)

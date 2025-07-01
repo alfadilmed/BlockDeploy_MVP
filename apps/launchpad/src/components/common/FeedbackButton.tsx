@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 
 export default function FeedbackButton() {
   const [showModal, setShowModal] = useState(false);
-  const discordLink = "#"; // TODO: Remplacer par le vrai lien Discord
-  const supportEmail = "support@blockdeploy.io"; // TODO: Remplacer/confirmer
+  const discordLink = "https://discord.gg/blockdeploy";
+  const supportEmail = "support@blockdeploy.io";
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function FeedbackButton() {
               Pour l'instant, veuillez nous envoyer vos retours, suggestions ou rapports de bugs via :
             </p>
             <ul className="list-disc list-inside mb-6 text-sm space-y-1">
-              {discordLink !== "#" && (
+              {discordLink && (
                 <li>
                   Notre serveur Discord : <a href={discordLink} target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:underline">Rejoindre ici</a>
                 </li>

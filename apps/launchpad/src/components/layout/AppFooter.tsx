@@ -1,13 +1,13 @@
 export default function AppFooter() {
-  const discordLink = "#"; // TODO: Remplacer par le vrai lien Discord
-  const supportEmail = "support@blockdeploy.io"; // TODO: Remplacer/confirmer l'email
+  const discordLink = "https://discord.gg/blockdeploy";
+  const supportEmail = "support@blockdeploy.io";
 
   return (
     <footer className="bg-slate-700 text-white p-6 text-center text-sm mt-auto">
       <div className="container mx-auto">
         <p className="mb-2">&copy; {new Date().getFullYear()} BlockDeploy Launchpad. Powered by Primex Software.</p>
         <div className="space-x-4">
-          {discordLink !== "#" && (
+          {discordLink && (
             <a href={discordLink} target="_blank" rel="noopener noreferrer" className="hover:text-slate-300 hover:underline">
               Rejoignez notre Discord
             </a>
