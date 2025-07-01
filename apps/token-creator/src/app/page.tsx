@@ -5,10 +5,37 @@ import React from 'react';
 
 import CreateTokenForm from '@/components/CreateTokenForm'; // Importer le composant formulaire
 
+import CreateTokenForm from '@/components/CreateTokenForm'; // Importer le composant formulaire
+import DeployedTokensList, { DeployedTokenHistoryItem } from '@/components/DeployedTokensList'; // Importer la liste
+import { useState, useEffect } from 'react'; // Pour gérer l'état de la liste
+
 export default function TokenCreatorPage() {
+  const [deployedTokens, setDeployedTokens] = useState<DeployedTokenHistoryItem[]>([]);
+
+  useEffect(() => {
+    // Charger les tokens depuis localStorage au montage côté client uniquement
+    if (typeof window !== 'undefined') {
+      const storedTokens = localStorage.getItem('deployedTokens');
+      if (storedTokens) {
+        try {
+          setDeployedTokens(JSON.parse(storedTokens));
+        } catch (e) {
+          console.error("Erreur lors de la lecture de l'historique des tokens depuis localStorage:", e);
+          localStorage.removeItem('deployedTokens'); // Supprimer les données corrompues
+        }
+      }
+    }
+  }, []);
+
+  // TODO: Ajouter une fonction pour mettre à jour `deployedTokens` lorsque CreateTokenForm
+  // déploie un nouveau token. Pour l'instant, un rechargement de page après déploiement
+  // est nécessaire pour voir le nouveau token dans la liste.
+  // Une meilleure approche serait d'utiliser un contexte ou un événement global.
+  // Ou que CreateTokenForm prenne une prop `onTokenDeployed` pour mettre à jour l'état ici.
+
   return (
     <div>
-      <div className="text-center mb-10"> {/* Ajustement du margin bottom */}
+      <div className="text-center mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
           Créateur de Tokens ERC-20
         </h1>
@@ -19,12 +46,10 @@ export default function TokenCreatorPage() {
       </div>
 
       <div className="max-w-2xl mx-auto p-6 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-2xl">
-        {/* Le titre est maintenant dans le composant CreateTokenForm */}
         <CreateTokenForm />
       </div>
 
-      {/* La section pour afficher les résultats du déploiement est gérée dans CreateTokenForm pour l'instant */}
-      {/* Si besoin de plus de détails, on pourra l'extraire ici */}
+      <DeployedTokensList tokens={deployedTokens} />
     </div>
   );
 }

@@ -17,32 +17,25 @@ Cette application permet aux utilisateurs de créer et déployer facilement des 
 
 *   **Interface Utilisateur (UI) :**
     *   Formulaire simple et intuitif pour configurer les paramètres du token ERC-20 :
-        *   Nom du Token
-        *   Symbole du Token
-        *   Supply Initiale (en unités entières)
-        *   Nombre de Décimales (par défaut 18)
+        *   Nom du Token (validation : requis, longueur max)
+        *   Symbole du Token (validation : requis, alphanumérique, longueur max)
+        *   Supply Initiale (en unités entières, validation : nombre positif)
+        *   Nombre de Décimales (validation : 0-18, le contrat `MinimalERC20.sol` utilise 18 par défaut)
 *   **Connexion Wallet :**
-    *   Intégration avec `@blockdeploy/core-sdk` pour la connexion du portefeuille de l'utilisateur (MetaMask, WalletConnect).
-    *   Le déploiement n'est possible que si un portefeuille est connecté.
+    *   Intégration avec `@blockdeploy/core-sdk` pour la connexion du portefeuille.
 *   **Logique de Déploiement :**
-    *   Utilisation du hook `useDeployToken` du `@blockdeploy/core-sdk` pour initier la transaction de déploiement du contrat.
-    *   L'ABI et le bytecode (actuellement un placeholder dans le SDK) d'un contrat ERC-20 minimal sont utilisés.
-    *   **Avertissement :** Le bytecode dans le SDK est un placeholder. Pour un déploiement réel, il doit être remplacé par le bytecode d'un contrat ERC-20 valide et compilé. Une alerte est affichée dans le formulaire si le bytecode placeholder est détecté.
-*   **Feedback Utilisateur :**
-    *   Affichage des états de la transaction de déploiement :
-        *   Envoi de la transaction au portefeuille.
-        *   Confirmation de la transaction en cours.
-        *   Message de succès avec l'adresse du contrat déployé et le hash de la transaction.
-        *   Messages d'erreur en cas de problème.
+    *   Utilisation du hook `useDeployToken` du `@blockdeploy/core-sdk`.
+    *   L'ABI et le bytecode du contrat `MinimalERC20.sol` (compilé depuis `@blockdeploy/smart-contracts` et stocké dans le SDK) sont utilisés.
+    *   L'adresse du portefeuille connecté est passée comme `initialOwner` au constructeur du token.
+*   **Feedback Utilisateur Amélioré :**
+    *   Messages d'erreur de validation affichés sous chaque champ.
+    *   Affichage des états de la transaction de déploiement (Envoi, Confirmation) et des messages de succès/erreur directement dans le formulaire (plus d'`alert()`).
 *   **Visualisation Post-Déploiement :**
-    *   Une fois le contrat déployé avec succès, affichage des détails du token lus depuis la blockchain :
-        *   Adresse du contrat
-        *   Nom
-        *   Symbole
-        *   Décimales
-        *   Supply Totale
-    *   Bouton pour copier l'adresse du contrat dans le presse-papiers.
-    *   Bouton pour voir le contrat sur un explorateur de blocs (ex: Etherscan pour Sepolia).
+    *   Affichage des détails du token (adresse, nom, symbole, décimales, supply) lus depuis la blockchain.
+    *   Boutons pour copier l'adresse et voir sur un explorateur de blocs.
+*   **Historique Local des Tokens :**
+    *   Les informations des tokens déployés avec succès (nom, symbole, adresse, chainId, déployeur, timestamp) sont sauvegardées dans le `localStorage` du navigateur.
+    *   Une liste des tokens déployés précédemment est affichée sous le formulaire de création.
 
 ## 2. Structure des Dossiers Clés
 

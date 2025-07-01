@@ -128,7 +128,7 @@ export interface DeployTokenArgs {
   name: string;
   symbol: string;
   initialSupply: bigint; // Doit être déjà ajusté avec les décimales
-  // decimals: number; // Les décimales sont souvent fixées dans le contrat, mais si le bytecode l'attend, ajoutez ici.
+  initialOwner: `0x${string}`; // Ajout du propriétaire initial
   contractAbi: Abi;
   contractBytecode: `0x${string}`;
 }
@@ -171,7 +171,7 @@ export function useDeployToken() {
       await writeContractAsync({
         abi: args.contractAbi,
         bytecode: args.contractBytecode,
-        args: [args.name, args.symbol, args.initialSupply], // Arguments du constructeur
+        args: [args.name, args.symbol, args.initialSupply, args.initialOwner], // Arguments du constructeur mis à jour
         // value: 0n, // Si le constructeur est payable
         // chainId: args.chainId, // Si on veut forcer une chaîne
       });

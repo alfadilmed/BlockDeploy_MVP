@@ -64,11 +64,12 @@ describe('core-sdk/contracts', () => {
       name: 'Test Token',
       symbol: 'TST',
       initialSupply: BigInt('1000000000000000000000'), // 1000 * 10^18
+      initialOwner: '0xTestDeployerAddress' as `0x${string}`, // Ajout de initialOwner
       contractAbi: minimalERC20Abi,
       contractBytecode: '0xValidBytecodePlaceholderForTesting12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890', // Placeholder valide
     };
 
-    it('should call writeContractAsync with correct parameters', async () => {
+    it('should call writeContractAsync with correct parameters including initialOwner', async () => {
       const { result } = renderHook(() => useDeployToken(), { wrapper: TestWrapper });
 
       await act(async () => {
@@ -79,7 +80,7 @@ describe('core-sdk/contracts', () => {
       expect(mockWriteContractAsync).toHaveBeenCalledWith({
         abi: deployArgs.contractAbi,
         bytecode: deployArgs.contractBytecode,
-        args: [deployArgs.name, deployArgs.symbol, deployArgs.initialSupply],
+        args: [deployArgs.name, deployArgs.symbol, deployArgs.initialSupply, deployArgs.initialOwner], // Vérifier initialOwner
       });
     });
 

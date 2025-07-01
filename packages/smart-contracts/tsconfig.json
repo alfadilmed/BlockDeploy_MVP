@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json", // Hérite de la config de base du monorepo
+  "compilerOptions": {
+    "target": "es2020", // Node.js supporte des versions ES plus récentes
+    "module": "commonjs", // Hardhat fonctionne mieux avec CommonJS pour ses fichiers de config et scripts
+    "esModuleInterop": true,
+    "strict": true,
+    "resolveJsonModule": true, // Pour importer les JSON (ex: artifacts)
+    "outDir": "dist", // Si vous compilez des scripts/libs TypeScript
+    "declaration": true, // Si vous prévoyez d'exporter des libs depuis ce package
+    // Paths spécifiques si besoin, mais Hardhat gère bien ses propres imports
+    "noEmit": false // On veut pouvoir compiler des scripts/tests si besoin
+  },
+  "include": ["./scripts/**/*.ts", "./test/**/*.ts", "./typechain-types/**/*.ts", "hardhat.config.ts"],
+  "exclude": ["node_modules", "dist", "artifacts", "cache"]
+}

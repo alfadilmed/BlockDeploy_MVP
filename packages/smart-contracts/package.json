@@ -1,0 +1,35 @@
+{
+  "name": "@blockdeploy/smart-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
+    "lint": "eslint . --ext .ts,.sol",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@openzeppelin/contracts": "^5.0.1",
+    "@typechain/ethers-v6": "^0.5.0",
+    "@typechain/hardhat": "^9.0.0",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": ">=9.1.0",
+    "chai": "^4.2.0",
+    "ethers": "^6.11.1",
+    "hardhat": "^2.22.2",
+    "hardhat-gas-reporter": "^1.0.8",
+    "solidity-coverage": "^0.8.0",
+    "ts-node": ">=8.0.0",
+    "typechain": "^8.3.0",
+    "typescript": "^5",
+    "eslint-plugin-solidity": "^1.0.0-beta.24"
+    // ESLint et Prettier seront principalement hérités de la racine
+    // mais on peut ajouter des plugins spécifiques comme eslint-plugin-solidity
+  }
+}

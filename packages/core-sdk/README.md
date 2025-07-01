@@ -289,11 +289,13 @@ function SendTxComponent() {
 
 Le SDK exporte également des ABIs et (placeholders de) bytecodes pour certains contrats standards.
 
-*   **`minimalERC20Abi`**: ABI pour un contrat ERC-20 de base.
-*   **`minimalERC20Bytecode`**: **Placeholder de bytecode** pour un contrat ERC-20.
-    **ATTENTION : Ce bytecode est un placeholder et DOIT être remplacé par un bytecode réel et compilé pour que la fonctionnalité de déploiement de token (`useDeployToken`) soit opérationnelle.** Un avertissement est émis dans la console si ce placeholder est utilisé.
+ *   **`minimalERC20Abi`**: ABI pour le contrat `MinimalERC20.sol` (défini dans `@blockdeploy/smart-contracts`).
+ *   **`minimalERC20Bytecode`**: Bytecode du contrat `MinimalERC20.sol` compilé.
+     **Note :** Ce bytecode est maintenant (censé être) le résultat de la compilation du contrat `MinimalERC20.sol` du package `@blockdeploy/smart-contracts`. Il est crucial que ce bytecode soit maintenu à jour si le contrat Solidity source est modifié.
 
-Ces artefacts se trouvent dans `packages/core-sdk/src/contracts/abis/MinimalERC20.ts`.
+Ces artefacts se trouvent dans `packages/core-sdk/src/contracts/abis/MinimalERC20.ts` et sont utilisés par le hook `useDeployToken`.
+
+Le constructeur du `MinimalERC20` (et donc les arguments pour `useDeployToken`) attend : `name (string)`, `symbol (string)`, `initialSupply (uint256)`, `initialOwner (address)`.
 
 ## 5. Configuration
 
