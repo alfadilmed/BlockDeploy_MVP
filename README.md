@@ -63,12 +63,19 @@ Les scripts suivants sont disponibles à la racine du monorepo (voir `package.js
 *   `yarn start`: Démarre l'application `landing` en mode production (après un build).
 *   `yarn lint`: Exécute ESLint sur tout le monorepo.
 *   `yarn format`: Exécute Prettier pour formater tout le code.
+*   `yarn test`: Exécute les tests Jest pour tous les packages.
+*   `yarn coverage`: Exécute les tests Jest et génère un rapport de couverture.
+*   `yarn compile-contracts`: Compile les smart contracts du package `@blockdeploy/smart-contracts` en utilisant Hardhat.
+*   `yarn update-artifacts`: Exécute le script `scripts/update-contract-artifacts.ts` pour compiler les contrats et mettre à jour les fichiers ABI/bytecode dans `@blockdeploy/core-sdk`. **Important à exécuter après chaque modification des contrats Solidity.**
 
 Des scripts spécifiques à chaque package/application sont disponibles dans leurs `package.json` respectifs et peuvent être lancés avec `yarn workspace <nom_du_workspace> <script>`.
 
 Par exemple :
-*   `yarn workspace landing dev`
+*   `yarn workspace landing dev` (lance la landing page sur le port 3000)
+*   `yarn workspace token-creator dev` (lance la dApp Token Creator sur le port 3001 - *Note: port à vérifier/configurer dans son package.json*)
+*   `yarn workspace launchpad dev` (lance la dApp Launchpad sur le port 3002)
 *   `yarn workspace @blockdeploy/core-sdk build`
+*   `yarn workspace @blockdeploy/smart-contracts test` (lance les tests Hardhat des contrats)
 
 ## 5. Lancer en Développement
 

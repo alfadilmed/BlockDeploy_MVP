@@ -12,8 +12,13 @@ Ce package contient le SDK principal pour interagir avec les fonctionnalités We
         *   [`useBlockDeployWallet`](#useblockdeploywallet)
         *   [`useBdpTokenBalance`](#usebdptokenbalance)
         *   [`useDeployToken`](#usedeploytoken)
-        *   [`useBlockDeployContractRead`](#useblockdeploycontractread) (et autres placeholders)
+        *   [`useBlockDeployContractRead`](#useblockdeploycontractread) (et autres placeholders pour `Write` et `Event`)
         *   [`useBlockDeploySendTransaction`](#useblockdeploysendtransaction)
+    *   [Hooks Launchpad](#hooks-launchpad)
+        *   [`useCreateLaunchpad`](#usecreatelaunchpad)
+        *   [`useLaunchpadBuy`](#uselaunchpadbuy)
+        *   [`useLaunchpadStatus`](#uselaunchpadstatus)
+        *   [`useLaunchpadOwnerActions`](#uselaunchpadowneractions)
 4.  [Artefacts de Contrat](#artefacts-de-contrat)
 5.  [Configuration](#configuration)
     *   [Variables d'Environnement](#variables-denvironnement)
@@ -252,6 +257,154 @@ function TokenName({ contractAddress }) {
 Consultez `packages/core-sdk/src/types.ts` (interface `ContractReadOptions`) et `contracts.ts` pour plus de détails. Les placeholders pour `useBlockDeployContractWrite` et `useBlockDeployContractEvent` existent aussi.
 
 
+### Hooks Launchpad
+
+#### `useCreateLaunchpad`
+
+Hook pour déployer un nouveau contrat `SimpleLaunchpad.sol`.
+
+```tsx
+import { useCreateLaunchpad, CreateLaunchpadArgs } from '@blockdeploy/core-sdk';
+import { ethers } from 'ethers';
+
+function CreateLaunchpadComponent() {
+  const {
+    createLaunchpad,
+    deployTxHash,
+    isDeploying,
+    contractAddress,
+    // ... autres états ...
+  } = useCreateLaunchpad();
+
+  const handleCreate = async () => {
+    const args: CreateLaunchpadArgs = {
+      tokenAddress: '0xYourTokenAddress...', // Adresse du token ERC20 à vendre
+      pricePerToken: ethers.parseUnits("0.001", "ether"), // Prix d'1 token en ETH (exprimé en wei)
+      amountToSell: ethers.parseUnits("100000", 18), // Quantité de tokens à vendre (avec 18 décimales)
+      deadline: BigInt(Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)), // Deadline dans 7 jours (timestamp Unix)
+    };
+    await createLaunchpad(args);
+  };
+  // ... UI pour le formulaire et affichage des états ...
+}
+```
+**Arguments pour `createLaunchpad(args: CreateLaunchpadArgs)`:**
+*   `tokenAddress: string`: Adresse du token ERC-20.
+*   `pricePerToken: bigint`: Prix d'un token en wei.
+*   `amountToSell: bigint`: Quantité de tokens à vendre (avec décimales du token).
+*   `deadline: bigint`: Timestamp Unix de fin de la vente.
+L'`initialOwner` est automatiquement l'adresse du portefeuille connecté. L'ABI et le bytecode de `SimpleLaunchpad.sol` sont utilisés en interne.
+
+**Valeurs Retournées :** Similaires à `useDeployToken` (hash, états de déploiement, adresse du contrat).
+
+
+#### `useLaunchpadBuy`
+
+Hook pour acheter des tokens depuis un contrat `SimpleLaunchpad` existant.
+
+```tsx
+import { useLaunchpadBuy, LaunchpadBuyArgs } from '@blockdeploy/core-sdk';
+import { ethers } from 'ethers';
+
+function BuyFromLaunchpad({ launchpadAddress, pricePerTokenWei }) {
+  const { buyTokens, buyTxHash, isSendingBuyTx, isBuyConfirmed, /* ... */ } = useLaunchpadBuy();
+
+  const handleBuy = async (amountTokensToBuyRaw: string, tokenDecimals: number) => {
+    const amountTokensWithDecimals = ethers.parseUnits(amountTokensToBuyRaw, tokenDecimals);
+    const args: LaunchpadBuyArgs = {
+      launchpadAddress: launchpadAddress as `0x${string}`,
+      tokenAmountToBuy: amountTokensWithDecimals,
+    };
+    // Le prix par token (pricePerTokenWei) est nécessaire pour calculer la `value` ETH à envoyer.
+    await buyTokens(args, pricePerTokenWei);
+  };
+  // ... UI pour le widget d'achat ...
+}
+```
+**Arguments pour `buyTokens(args: LaunchpadBuyArgs, pricePerTokenInWei: bigint)`:**
+*   `launchpadAddress: string`: Adresse du contrat Launchpad.
+*   `tokenAmountToBuy: bigint`: Quantité de tokens à acheter (avec les décimales du token).
+*   `pricePerTokenInWei: bigint`: Le prix d'un token entier en wei (lu depuis le contrat Launchpad, par exemple via `useLaunchpadStatus`).
+
+**Valeurs Retournées :** Similaires à `useDeployToken` mais pour l'achat (hash, états de transaction, reçu).
+
+
+#### `useLaunchpadStatus`
+
+Hook pour lire l'état et les informations d'un contrat `SimpleLaunchpad`.
+
+```tsx
+import { useLaunchpadStatus } from '@blockdeploy/core-sdk';
+
+function LaunchpadStatusViewer({ launchpadAddress }) {
+  const { isLoading, status } = useLaunchpadStatus(launchpadAddress as `0x${string}`);
+
+  if (isLoading) return <p>Chargement du statut...</p>;
+  if (!status.tokenAddress) return <p>Launchpad non trouvé ou invalide.</p>;
+
+  return (
+    <div>
+      <p>Token à vendre: {status.tokenSymbol} ({status.tokenAddress})</p>
+      <p>Prix: {ethers.formatEther(status.pricePerToken || 0n)} ETH</p>
+      <p>Deadline: {new Date(Number(status.deadlineTimestamp || 0n) * 1000).toLocaleString()}</p>
+      {/* ... et autres informations du statut ... */}
+    </div>
+  );
+}
+```
+**Argument pour `useLaunchpadStatus(launchpadAddress?: string)`:**
+*   `launchpadAddress?: string`: Adresse du contrat Launchpad. Le hook ne s'exécute que si l'adresse est fournie.
+
+**Valeurs Retournées (`status` object) :**
+*   `tokenAddress`, `tokenDecimals`, `tokenSymbol`, `pricePerToken`, `amountToSell`, `deadlineTimestamp`, `totalSold`, `raisedAmountInWei`, `ownerAddress`, `isSaleActive`, `remainingToSell`.
+*   `isLoading: boolean`: État de chargement global pour toutes les lectures.
+
+
+#### `useLaunchpadOwnerActions`
+
+Hook pour permettre au propriétaire d'un contrat `SimpleLaunchpad` d'exécuter les actions de retrait.
+
+```tsx
+import { useLaunchpadOwnerActions, LaunchpadOwnerActionParams } from '@blockdeploy/core-sdk';
+
+function LaunchpadOwnerControls({ launchpadAddress }) {
+  const {
+    executeWithdrawFunds,
+    isWithdrawingFunds,
+    // ... états pour withdrawFunds ...
+    executeWithdrawUnsoldTokens,
+    isWithdrawingTokens,
+    // ... états pour withdrawUnsoldTokens ...
+  } = useLaunchpadOwnerActions();
+
+  const handleWithdrawETH = async () => {
+    const params: LaunchpadOwnerActionParams = { launchpadAddress: launchpadAddress as `0x${string}` };
+    await executeWithdrawFunds(params);
+  };
+
+  const handleWithdrawTokens = async () => {
+    const params: LaunchpadOwnerActionParams = { launchpadAddress: launchpadAddress as `0x${string}` };
+    await executeWithdrawUnsoldTokens(params);
+  };
+
+  // ... UI avec boutons et affichage des états ...
+}
+```
+**Argument pour `executeWithdrawFunds(args: LaunchpadOwnerActionParams)` et `executeWithdrawUnsoldTokens(args: LaunchpadOwnerActionParams)`:**
+*   `launchpadAddress: string`: Adresse du contrat Launchpad.
+
+**Valeurs Retournées (pour chaque action, ex: `withdrawFunds`) :**
+*   `executeWithdrawFunds`: Fonction pour initier le retrait des fonds ETH.
+*   `withdrawFundsTxHash`: Hash de la transaction.
+*   `isWithdrawingFunds`: Vrai si la transaction est en cours d'envoi.
+*   `withdrawFundsError`: Erreur d'envoi.
+*   `isConfirmingWithdrawFunds`: Vrai pendant la confirmation.
+*   `isWithdrawFundsConfirmed`: Vrai si la transaction est confirmée.
+*   `withdrawFundsConfirmationError`: Erreur de confirmation.
+*   `withdrawFundsReceipt`: Reçu de la transaction.
+*   (Des champs similaires existent pour `withdrawUnsoldTokens`).
+
+
 #### `useBlockDeploySendTransaction`
 
 Hook pour envoyer des transactions simples (transfert d'ETH par exemple).
@@ -289,13 +442,19 @@ function SendTxComponent() {
 
 Le SDK exporte également des ABIs et (placeholders de) bytecodes pour certains contrats standards.
 
- *   **`minimalERC20Abi`**: ABI pour le contrat `MinimalERC20.sol` (défini dans `@blockdeploy/smart-contracts`).
- *   **`minimalERC20Bytecode`**: Bytecode du contrat `MinimalERC20.sol` compilé.
-     **Note :** Ce bytecode est maintenant (censé être) le résultat de la compilation du contrat `MinimalERC20.sol` du package `@blockdeploy/smart-contracts`. Il est crucial que ce bytecode soit maintenu à jour si le contrat Solidity source est modifié.
+ *   **`minimalERC20Abi`**: ABI pour le contrat `MinimalERC20.sol`.
+ *   **`minimalERC20Bytecode`**: Bytecode (actuellement placeholder à remplacer par l'utilisateur) du contrat `MinimalERC20.sol`.
+ *   **`simpleLaunchpadAbi`**: ABI pour le contrat `SimpleLaunchpad.sol`.
+ *   **`simpleLaunchpadBytecode`**: Bytecode (actuellement placeholder à remplacer par l'utilisateur) du contrat `SimpleLaunchpad.sol`.
 
-Ces artefacts se trouvent dans `packages/core-sdk/src/contracts/abis/MinimalERC20.ts` et sont utilisés par le hook `useDeployToken`.
+    **ATTENTION : Les bytecodes (`minimalERC20Bytecode`, `simpleLaunchpadBytecode`) sont des placeholders et DOIVENT être remplacés par les bytecodes réels compilés depuis `@blockdeploy/smart-contracts` pour que les déploiements fonctionnent.**
 
-Le constructeur du `MinimalERC20` (et donc les arguments pour `useDeployToken`) attend : `name (string)`, `symbol (string)`, `initialSupply (uint256)`, `initialOwner (address)`.
+Ces artefacts se trouvent dans `packages/core-sdk/src/contracts/abis/`.
+
+**Constructeurs :**
+*   `MinimalERC20`: `name (string)`, `symbol (string)`, `initialSupply (uint256)`, `initialOwner (address)`.
+*   `SimpleLaunchpad`: `tokenAddress (address)`, `pricePerToken (uint256)`, `amountToSell (uint256)`, `deadline (uint256)`, `initialOwner (address)`.
+
 
 ## 5. Configuration
 

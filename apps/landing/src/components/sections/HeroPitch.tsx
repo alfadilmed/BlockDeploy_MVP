@@ -14,16 +14,29 @@ export default function HeroPitch() {
         <div className="space-x-4">
           <Link href="/ico#buy">
             <Button variant="primary" size="lg" className="bg-yellow-400 hover:bg-yellow-500 text-gray-900">
-              Acheter des Tokens $BDPY
+              Participer à l'ICO $BDPY
             </Button>
           </Link>
-          <Link href="/features">
-            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white/10">
-              Découvrir les Fonctionnalités
+          <Link href="#apps-section"> {/* Supposons une future section listant les apps, ou un lien direct */}
+            <Button variant="secondary" size="lg" className="bg-sky-400 hover:bg-sky-500 text-white">
+              Explorer les dApps
             </Button>
           </Link>
         </div>
+        <p className="mt-10 text-sm">
+            <Link href="/features" className="hover:underline">
+                En savoir plus sur les fonctionnalités &rarr;
+            </Link>
+        </p>
       </div>
     </section>
+    // Une section #apps-section pourrait être ajoutée plus bas dans page.tsx
+    // <section id="apps-section" className="py-12 md:py-16">
+    //   <h2 class="text-center text-2xl font-bold">Nos dApps Actuellement Disponibles :</h2>
+    //   <div class="flex justify-center space-x-4 mt-6">
+    //     <Link href="/token-creator"><Button>Token Creator</Button></Link>
+    //     <Link href="/launchpad"><Button>Launchpad</Button></Link>
+    //   </div>
+    // </section>
   );
 }

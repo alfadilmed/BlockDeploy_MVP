@@ -19,9 +19,9 @@ Ce package contient les smart contracts Solidity pour la plateforme BlockDeploy,
 
 ## 1. Structure du Projet
 
-*   `contracts/`: Contient les fichiers de code source Solidity (`.sol`). Actuellement, `MinimalERC20.sol`.
-*   `scripts/`: Contient les scripts de déploiement et d'interaction avec les contrats (en TypeScript). Un script d'exemple `deploy.ts` pourrait être ajouté.
-*   `test/`: Contient les tests pour les smart contracts (en TypeScript, utilisant Chai et Hardhat Network Helpers). Actuellement, `MinimalERC20.test.ts`.
+*   `contracts/`: Contient les fichiers de code source Solidity (`.sol`). Inclut `MinimalERC20.sol` et `SimpleLaunchpad.sol`.
+*   `scripts/`: Contient les scripts de déploiement et d'interaction avec les contrats (en TypeScript). Des scripts pour déployer `MinimalERC20.sol` et `SimpleLaunchpad.sol` peuvent y être ajoutés.
+*   `test/`: Contient les tests pour les smart contracts. Inclut `MinimalERC20.test.ts` et `SimpleLaunchpad.test.ts`.
 *   `hardhat.config.ts`: Fichier de configuration principal de Hardhat.
 *   `artifacts/`: Généré par Hardhat lors de la compilation, contient les ABIs et bytecodes des contrats. (Gitignoré)
 *   `cache/`: Généré par Hardhat. (Gitignoré)
